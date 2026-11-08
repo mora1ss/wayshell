@@ -1,0 +1,26 @@
+{
+  "name": "Zellij",
+  "category": "tools",
+  "icon": "",
+  "detect": {
+    "bin": [
+      "zellij"
+    ]
+  },
+  "templates": [
+    {
+      "input": "wayshell.kdl",
+      "output": "$XDG_CONFIG_HOME/zellij/themes/wayshell.kdl"
+    }
+  ],
+  "integrate": [
+    {
+      "type": "line",
+      "file": "$XDG_CONFIG_HOME/zellij/config.kdl",
+      "line": "theme \"wayshell\"",
+      "comment": "//",
+      "disable": "^theme\\s+\"",
+      "create": true
+    }
+  ]
+}

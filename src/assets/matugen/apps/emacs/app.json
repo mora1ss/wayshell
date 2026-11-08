@@ -1,0 +1,43 @@
+{
+  "name": "Emacs",
+  "category": "editors",
+  "icon": "",
+  "hint": "emacs",
+  "detect": {
+    "bin": [
+      "emacs"
+    ]
+  },
+  "templates": [
+    {
+      "input": "wayshell-theme.el",
+      "output": "$XDG_CONFIG_HOME/emacs/wayshell-theme.el",
+      "when": {
+        "path": [
+          "$XDG_CONFIG_HOME/emacs"
+        ]
+      }
+    },
+    {
+      "input": "wayshell-theme.el",
+      "output": "$HOME/.emacs.d/wayshell-theme.el",
+      "when": {
+        "path": [
+          "$HOME/.emacs.d"
+        ]
+      }
+    },
+    {
+      "input": "wayshell-theme.el",
+      "output": "$XDG_CONFIG_HOME/doom/themes/wayshell-theme.el",
+      "when": {
+        "path": [
+          "$XDG_CONFIG_HOME/doom"
+        ]
+      }
+    }
+  ],
+  "reload": [
+    "command -v emacsclient >/dev/null 2>&1 && timeout 3 emacsclient -e \"(when (custom-theme-enabled-p 'wayshell) (load-theme 'wayshell t))\" >/dev/null 2>&1; true"
+  ]
+}

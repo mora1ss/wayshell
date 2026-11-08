@@ -1,0 +1,29 @@
+{
+  "name": "aerc",
+  "category": "apps",
+  "icon": "󰇮",
+  "hint": "restart",
+  "detect": {
+    "bin": [
+      "aerc"
+    ]
+  },
+  "templates": [
+    {
+      "input": "wayshell",
+      "output": "$XDG_CONFIG_HOME/aerc/stylesets/wayshell"
+    }
+  ],
+  "integrate": [
+    {
+      "type": "ini",
+      "file": "$XDG_CONFIG_HOME/aerc/aerc.conf",
+      "values": {
+        "ui": {
+          "styleset-name": "wayshell"
+        }
+      },
+      "create": true
+    }
+  ]
+}

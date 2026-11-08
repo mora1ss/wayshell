@@ -1,0 +1,49 @@
+{
+  "name": "Obsidian",
+  "category": "editors",
+  "icon": "󱓧",
+  "detect": {
+    "bin": [
+      "obsidian"
+    ],
+    "flatpak": [
+      "md.obsidian.Obsidian"
+    ]
+  },
+  "templates": [
+    {
+      "input": "wayshell.css",
+      "output": "$EACH/.obsidian/snippets/wayshell.css",
+      "each": [
+        {
+          "json": "$XDG_CONFIG_HOME/obsidian/obsidian.json",
+          "key": "vaults.*.path"
+        },
+        {
+          "json": "$HOME/.var/app/md.obsidian.Obsidian/config/obsidian/obsidian.json",
+          "key": "vaults.*.path"
+        }
+      ]
+    }
+  ],
+  "integrate": [
+    {
+      "type": "json",
+      "file": "$EACH/.obsidian/appearance.json",
+      "append": {
+        "enabledCssSnippets": "wayshell"
+      },
+      "create": true,
+      "each": [
+        {
+          "json": "$XDG_CONFIG_HOME/obsidian/obsidian.json",
+          "key": "vaults.*.path"
+        },
+        {
+          "json": "$HOME/.var/app/md.obsidian.Obsidian/config/obsidian/obsidian.json",
+          "key": "vaults.*.path"
+        }
+      ]
+    }
+  ]
+}

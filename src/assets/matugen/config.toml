@@ -1,0 +1,6 @@
+[config]
+reload_apps = false
+
+[templates.quickshell]
+input_path = "templates/wayshell_matugen_colors.json.template"
+output_path = "~/.local/state/wayshell/qs_colors.json"
