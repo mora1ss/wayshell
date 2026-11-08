@@ -558,8 +558,10 @@ deploy_package() {
         fi
     fi
 
-    if [ -f "$REPO_ROOT/version.txt" ]; then
-        rm -f "$TARGET_BASE/src/version.txt"
+    rm -f "$TARGET_BASE/src/version.txt"
+    if [ -n "${WAYSHELL_INSTALL_VERSION:-}" ]; then
+        printf '%s\n' "$WAYSHELL_INSTALL_VERSION" > "$TARGET_BASE/src/version.txt"
+    elif [ -f "$REPO_ROOT/version.txt" ]; then
         cp "$REPO_ROOT/version.txt" "$TARGET_BASE/src/version.txt"
     fi
 

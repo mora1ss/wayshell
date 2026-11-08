@@ -8,6 +8,9 @@ printf '\033[9;0]' 2>/dev/null || true
 RAW_SLUG="${REPO_SLUG:-mora1ss/wayshell}"
 REPO_SLUG="$(printf '%s' "$RAW_SLUG" | tr -d '\r\n\t ' | sed 's/[^a-zA-Z0-9_\/-]//g')"
 CACHE_BASE="${XDG_CACHE_HOME:-$HOME/.cache}/wayshell-installer"
+STATE_MARKER="${XDG_STATE_HOME:-$HOME/.local/state}/wayshell/version"
+INITIAL_REF="${WAYS_INITIAL_REF:-v2.4.3}"
+INITIAL_VERSION="${WAYS_INITIAL_VERSION:-2.4.3}"
 export REPO_SLUG
 export WAYSHELL_INSTALLER=1
 
@@ -30,14 +33,18 @@ if [[ -z "$PROJECT_ROOT" || ! -f "$PROJECT_ROOT/install/modules/deps.sh" || ! -d
             sudo xbps-install -Sy git
         fi
     fi
+    if [ -f "$STATE_MARKER" ]; then
+        CLONE_REF="${WAYSHELL_BRANCH:-main}"
+    else
+        CLONE_REF="$INITIAL_REF"
+    fi
     if [ ! -d "$CACHE_BASE/.git" ]; then
         rm -rf "$CACHE_BASE"
-        mkdir -p "$CACHE_BASE"
-        git clone "https://github.com/${REPO_SLUG}.git" "$CACHE_BASE"
+        git clone --depth 1 --branch "$CLONE_REF" "https://github.com/${REPO_SLUG}.git" "$CACHE_BASE"
     else
         git -C "$CACHE_BASE" remote set-url origin "https://github.com/${REPO_SLUG}.git" 2>/dev/null || true
-        git -C "$CACHE_BASE" fetch origin 2>/dev/null || true
-        git -C "$CACHE_BASE" reset --hard origin/HEAD 2>/dev/null || git -C "$CACHE_BASE" reset --hard origin/main 2>/dev/null || git -C "$CACHE_BASE" reset --hard origin/master 2>/dev/null || true
+        git -C "$CACHE_BASE" fetch --depth 1 origin "$CLONE_REF"
+        git -C "$CACHE_BASE" checkout --detach FETCH_HEAD
     fi
     INSTALL_DIR="$CACHE_BASE/install"
     PROJECT_ROOT="$CACHE_BASE"
@@ -79,11 +86,20 @@ TARGET_VERSION=$(get_target_version "$PROJECT_ROOT" "$REPO_SLUG")
 TARGET_COMMIT=$(get_target_commit "$PROJECT_ROOT" "$REPO_SLUG")
 OLD_COMMIT=$(get_installed_commit)
 
+if [[ "$INSTALL_STATE" == "fresh" || "$INSTALL_STATE" == "legacy" ]]; then
+    TARGET_VERSION="$INITIAL_VERSION"
+fi
+
 init_compositor_detection
 run_installer_ui
 
 TARGET_VERSION=$(get_target_version "$PROJECT_ROOT" "$REPO_SLUG")
 TARGET_COMMIT=$(get_target_commit "$PROJECT_ROOT" "$REPO_SLUG")
+
+if [[ "$INSTALL_STATE" == "fresh" || "$INSTALL_STATE" == "legacy" ]]; then
+    TARGET_VERSION="$INITIAL_VERSION"
+    export WAYSHELL_INSTALL_VERSION="$INITIAL_VERSION"
+fi
 
 if [[ "$INSTALL_STATE" == "legacy" ]]; then
     migrate_legacy "${SELECTED_COMPOSITORS[@]}"
